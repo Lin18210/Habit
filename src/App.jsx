@@ -12,8 +12,8 @@ const App = () => {
         <h1 className='text-3xl font-bold text-center mb-8'>Habit Tracker</h1>
       <Navbar/>
       <Routes>
-      <Route path='/' element={<HabitList/>}/>
-      <Route path='/calender' element={<Calendar/>}/>
+        <Route path='/' element={<HabitList/>}/>
+        <Route path='/calender' element={<Calendar/>}/>
       </Routes>
       </div>
     </Router>

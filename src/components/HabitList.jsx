@@ -54,10 +54,8 @@ const HabitList = () => {
             </div>
           ))}
         </div>
-
       </>
     )
-
 }
 
 export default HabitList
