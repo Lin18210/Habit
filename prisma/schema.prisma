@@ -27,19 +27,21 @@ model User{
 model Habit {
   id              Int           @id @default(autoincrement())
   name            String        
-  completed       Boolean       @default(fault)
+  completed       Boolean       @default(false)
   createdAt       DateTime      @default(now()) @map("created_at")
   userId          Int           @map("user_id")
   user            User          @relation(fields: [userId], references:[id]) 
-  comepletedDates CompletedDate[]
+  completedDates  CompletedDate[]
+
+  @@map("habits")
 }
 
 model CompletedDate {
   id              Int           @id @default(autoincrement())
   habitId         Int           @map("habit_id")
-  CompletedDate   DateTime      @map("completed_date")
+  completedDate   DateTime      @map("completed_date")
   habit           Habit         @relation(fields:[habitId], references:[id], onDelete:Cascade)
 
   @@unique([habitId, completedDate])
-  @@map("completed_dates)
+  @@map("completed_dates")
 }
