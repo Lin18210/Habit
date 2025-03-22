@@ -1,41 +1,122 @@
-import {createContext, useContext, useState } from "react";
+import {createContext, useContext, useState, useEffect } from "react";
+import { useAuth } from "./AuthContext";
 
 const HabitContext = createContext();
+const API_URL = 'http://localhost:5000/api';
 
 export const HabitProvider = ({children}) => {
     const [habits, setHabits] = useState([])
+    const [loading, setLoading] = useState(true)
+    const {user} = useAuth()
 
-    const addHabit = (newHabit) => {
-        const habit = {
-            id : Date.now(),
-            name : newHabit,
-            completed : false, 
-            createdAt : new Date(),
-            completedDates : [] 
-        };
-        setHabits([...habits, habit])
-    }
+    useEffect(() => {
+        if(user){
+            fetchHabits();
+        }else{
+            setHabits([])
+            setLoading(false)
+        }
+    }, [user])
 
-    const deleteHabit = (id) => {
-        setHabits(habits.filter((habit) => habit.id !== id))
-    }
+    const fetchHabits = async () => {
+       try{
+            setLoading(true);
+            const token = localStorage.getItem('token');
 
-    const toggleHabit = (id) => {
-        const today = new Date().toISOString().split("T")[0];
-        setHabits(habits.map((habit) => {
-            if (habit.id === id) {
-                const isCompleted = !habit.completed
-                const completedDates = isCompleted ? [...habit.completedDates, today] : habit.completedDates.filter(date => date !== today)
-
-                return {
-                    ...habit,completed : isCompleted, completedDates
+            const response = await fetch(`${API_URL}/habits`,{
+                headers: {
+                    'Authorization': `Bearer ${token}`,
                 }
+            })
+
+            if(!response.ok){
+                throw new Error('Failed to fetch habits')
             }
-            return habit;
-        }))
+
+            const data = await response.json()
+            setHabits(data)
+       } 
+       catch(error){
+            console.error('Error fetching habits:', error)
+       }
+       finally{
+            setLoading(false)
+       }
+    }
+
+    const addHabit = async (newHabit) => {
+        try{
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/habits`,{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({name: newHabit}),
+            })
+
+            if(!response.ok){
+                throw new Error('Failed to add habit')
+            }
+
+            const habit = await response.json()
+            setHabits([...habits, habit])
+        }
+        catch(error){
+            console.error('Error adding habit:', error)
+        }
+    }
+
+    const deleteHabit = async(id) => {
+        try{
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/habits/${id}`,{
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+            if(!response.ok){
+                throw new Error('Failed to delete habit')
+            }
+            setHabits(habits.filter((habit) => habit.id !== id))
+        }
+        catch(error){
+            console.error('Error deleting habit:', error)
+        }
+    }
+
+    const toggleHabit = async(id) => {
+        try{ 
+            const today = new Date().toISOString().split("T")[0];
+            const token = localStorage.getItem('token');
+
+            const response = await fetch(`${API_URL}/habits/${id}/toggle`,{
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                },
+                body: JSON.stringify({date: today}),
+            })
+
+            if(!response.ok){
+                throw new Error('Failed to toggle habit')
+            }
+
+            const updatedHabit = await response.json()
+            setHabits(habits.map(habit => habit.id === id ? updatedHabit : habit))
+        }
+       
+        catch(error){
+            console.error('Error toggling habit:', error)
+        }
     }
     return(
-        <HabitContext.Provider value={{habits, addHabit, deleteHabit, toggleHabit}}>
+        <HabitContext.Provider value={{habits, addHabit, deleteHabit, toggleHabit, loading}}>
             {children}
         </HabitContext.Provider>
     )
