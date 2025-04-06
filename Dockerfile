@@ -16,6 +16,5 @@ RUN npm rebuild bcrypt --build-from-source
 # Generate Prisma client
 RUN npx prisma generate
 
-EXPOSE 5000
-
+EXPOSE 5001  
 CMD ["node", "./src/server.js"]
