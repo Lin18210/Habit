@@ -29,10 +29,21 @@ const authenticationToken = (req, res, next) => {
 };
 
 // Routes
-// Register
+// Register route (POST)
 app.post('/api/auth/register', async(req,res) => {
     try{
         const {username, email, password} = req.body;
+
+        // Add validation
+        if (!username || !email || !password) {
+            return res.status(400).json({message: "All fields are required"});
+        }
+
+        // Validate email format
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            return res.status(400).json({message: "Invalid email format"});
+        }
 
         const existingUser = await prisma.user.findFirst({
             where: {
@@ -51,29 +62,35 @@ app.post('/api/auth/register', async(req,res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Create new user
-        const newUser = await prisma.user.create({
-            data:{
+        const user = await prisma.user.create({
+            data: {
                 username,
                 email,
-                password:hashedPassword
-            },
-            select:{
-                id: true,
-                username: true,
-                email: true
+                password: hashedPassword
             }
         });
 
         // Generate token
         const token = jwt.sign(
-            {id: newUser.id, username: newUser.username}, process.env.JWT_SECRET,{expiresIn: '7d'}
+            { id: user.id, email: user.email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
         );
 
-        res.status(201).json({token, user:newUser});
-    } catch(error){
-        console.error(error);
-        res.status(500).json({message: "Internal server error"});
+        res.status(201).json({
+            token,
+            user: {
+                id: user.id,
+                username: user.username,
+                email: user.email
+            }
+        });
+    } catch (error) {
+        console.error('Registration error:', error);
+        res.status(500).json({ 
+            message: "Internal server error",
+            error: error.message
+        });
     }
 });
 
@@ -269,6 +286,25 @@ app.patch('/api/habits/:id/toggle', authenticationToken, async(req, res) => {
         console.error(error);
         res.status(500).json({message: "Internal server error"});
     }
+});
+
+// Add a root route handler
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Habit Tracker API is running',
+    endpoints: {
+      auth: {
+        register: '/api/auth/register',
+        login: '/api/auth/login'
+      },
+      habits: {
+        getAll: '/api/habits',
+        create: '/api/habits',
+        delete: '/api/habits/:id',
+        toggle: '/api/habits/:id/toggle'
+      }
+    }
+  });
 });
 
 const PORT = process.env.PORT || 5000;
