@@ -29,18 +29,18 @@ const Register = () => {
     };
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-            <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
+        <div className="max-w-md mx-auto p-6 bg-slate-800 rounded-lg shadow-md border border-slate-700">
+            <h2 className="text-2xl font-bold mb-6 text-center text-slate-100">Register</h2>
             
             {error && (
-                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                <div className="bg-red-900/30 border border-red-800 text-red-200 px-4 py-3 rounded mb-4">
                     {error}
                 </div>
             )}
             
             <form onSubmit={handleSubmit}>
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="username">
+                    <label className="block text-slate-300 text-sm font-medium mb-2" htmlFor="username">
                         Username
                     </label>
                     <input
@@ -48,13 +48,13 @@ const Register = () => {
                         type="text"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-slate-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-slate-700 text-slate-200"
                         required
                     />
                 </div>
                 
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">
+                    <label className="block text-slate-300 text-sm font-medium mb-2" htmlFor="email">
                         Email
                     </label>
                     <input
@@ -62,13 +62,13 @@ const Register = () => {
                         type="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-slate-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-slate-700 text-slate-200"
                         required
                     />
                 </div>
                 
                 <div className="mb-4">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="password">
+                    <label className="block text-slate-300 text-sm font-medium mb-2" htmlFor="password">
                         Password
                     </label>
                     <input
@@ -76,13 +76,13 @@ const Register = () => {
                         type="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-slate-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-slate-700 text-slate-200"
                         required
                     />
                 </div>
                 
                 <div className="mb-6">
-                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirmPassword">
+                    <label className="block text-slate-300 text-sm font-medium mb-2" htmlFor="confirmPassword">
                         Confirm Password
                     </label>
                     <input
@@ -90,23 +90,23 @@ const Register = () => {
                         type="password"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                        className="w-full px-3 py-2 border border-slate-600 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 bg-slate-700 text-slate-200"
                         required
                     />
                 </div>
                 
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+                    className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
                 >
                     Register
                 </button>
             </form>
             
             <div className="mt-4 text-center">
-                <p>
+                <p className="text-slate-400">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-blue-500 hover:text-blue-700">
+                    <Link to="/login" className="text-blue-400 hover:text-blue-300">
                         Login
                     </Link>
                 </p>

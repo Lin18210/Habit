@@ -19,50 +19,58 @@ const Calendar = () => {
         setCompletedDates(dates);
     }, [habits]);
 
-        const renderCalendar = () => {
-            const today = new Date();
-            const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
-            const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-            const daysInMonth = lastDay.getDate();
-            const startingDay = firstDay.getDay();
+    const renderCalendar = () => {
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+        const daysInMonth = lastDay.getDate();
+        const startingDay = firstDay.getDay();
 
-            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-            const weeks = Math.ceil((daysInMonth + startingDay) / 7);
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const weeks = Math.ceil((daysInMonth + startingDay) / 7);
 
-            return (
-                <div className="w-full max-w-3xl mx-auto">
-                    <div className="grid grid-cols-7 gap-1 mb-2">
-                        {days.map(day => (
-                            <div key={day} className="text-center font-semibold p-2">
-                                {day}
-                            </div>
-                        ))}
-                    </div>
-                    <div className="grid grid-cols-7 gap-1">
-                        {Array.from({ length: weeks * 7 }).map((_, index) => {
-                            const day = index - startingDay + 1;
-                            const dateStr = day > 0 && day <= daysInMonth
-                                ? new Date(today.getFullYear(), today.getMonth(), day)
-                                    .toISOString()
-                                    .split('T')[0]
-                                : null;
-                            
-                            const isCompleted = dateStr && 
-                                completedDates[dateStr]?.completed === habits.length && 
-                                habits.length > 0;
+        return (
+            <div className="w-full max-w-3xl mx-auto">
+                <div className="grid grid-cols-7 gap-1 mb-2">
+                    {days.map(day => (
+                        <div key={day} className="text-center font-medium p-2 text-slate-400">
+                            {day}
+                        </div>
+                    ))}
+                </div>
+                <div className="grid grid-cols-7 gap-2">
+                    {Array.from({ length: weeks * 7 }).map((_, index) => {
+                        const day = index - startingDay + 1;
+                        const dateStr = day > 0 && day <= daysInMonth
+                            ? new Date(today.getFullYear(), today.getMonth(), day)
+                                .toISOString()
+                                .split('T')[0]
+                            : null;
+                        
+                        const isCompleted = dateStr && 
+                            completedDates[dateStr]?.completed === habits.length && 
+                            habits.length > 0;
+
+                        const isToday = day === today.getDate();
 
                         return (
                             <div
                                 key={index}
-                                className={`aspect-square p-2 border rounded-3xl font-bold ${
+                                className={`aspect-square p-2 border rounded-lg font-medium flex items-center justify-center transition-all ${
                                     day > 0 && day <= daysInMonth
-                                        ? isCompleted
-                                            ? 'bg-green-500 text-white'
-                                            : 'bg-white'
-                                        : 'bg-gray-100'
+                                        ? isToday
+                                            ? 'border-purple-500 shadow-md'
+                                            : 'border-slate-700'
+                                        : 'bg-transparent border-transparent'
+                                } ${
+                                    isCompleted
+                                        ? 'bg-green-600 text-white shadow-md'
+                                        : day > 0 && day <= daysInMonth
+                                            ? 'bg-slate-700 hover:bg-slate-600 text-slate-300'
+                                            : ''
                                 }`}
                             >
-                                <div className="h-full flex items-center justify-center">
+                                <div className="flex items-center justify-center">
                                     {day > 0 && day <= daysInMonth ? day : ''}
                                 </div>
                             </div>
@@ -75,10 +83,13 @@ const Calendar = () => {
 
     return (
         <div className="p-4">
-            <h2 className="text-xl font-bold mb-4 text-center">
+            <h2 className="text-xl font-bold mb-6 text-center text-slate-100">
                 {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
             </h2>
             {renderCalendar()}
+            <div className="mt-6 text-center text-slate-500 text-sm">
+                <p>Purple days indicate all tasks were completed</p>
+            </div>
         </div>
     );
 };
